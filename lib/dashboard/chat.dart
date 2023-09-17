@@ -115,7 +115,7 @@ class _ChatPageState extends State<ChatPage> {
 
   //     if (csrfToken != null && userLocation != null) {
   //       final response = await http.post(
-  //         Uri.parse('http://10.0.2.2:8000/api/chatbot/'),
+  //         Uri.parse('http://192.168.0.103:8000/api/chatbot/'),
   //         headers: {
   //           'Content-Type': 'application/json',
   //           'X-CSRFToken': csrfToken,
@@ -156,7 +156,7 @@ class _ChatPageState extends State<ChatPage> {
 
         if (csrfToken != null && userLocation != null) {
           final response = await http.post(
-            Uri.parse('http://10.0.2.2:8000/api/chatbot/'),
+            Uri.parse('http://192.168.0.103:8000/api/chatbot/'),
             headers: {
               'Content-Type': 'application/json',
               'X-CSRFToken': csrfToken,
@@ -194,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
 
 
   Future<String?> _fetchCsrfToken() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/get-csrf/'));
+    final response = await http.get(Uri.parse('http://192.168.0.103:8000/get-csrf/'));
     if (response.statusCode == 200) {
       final cookies = response.headers['set-cookie'];
       final matches = RegExp(r"csrftoken=(.*?);").firstMatch(cookies!);
