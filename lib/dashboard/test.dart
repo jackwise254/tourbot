@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -40,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildTypingAnimation() {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 15.0, right: 15.0),
+      padding: const EdgeInsets.all(8.0),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
@@ -52,17 +54,12 @@ class _ChatPageState extends State<ChatPage> {
               side: BorderSide(color: Colors.black87, width: 1.0),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/bot.png'),
-                  ),
+                  CircleAvatar(backgroundImage: AssetImage('assets/bot.png')),
                   SizedBox(width: 10),
-                  Text(
-                    'Gideon is typing...',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
+                  Text('Gideon is typing...', style: TextStyle(fontSize: 16, color: Colors.black87)),
                 ],
               ),
             ),
@@ -76,26 +73,20 @@ class _ChatPageState extends State<ChatPage> {
     bool serviceEnabled;
     LocationPermission permission;
     
-    // Check if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Could potentially show a dialog to the user to manually enable it.
       return null;
     }
 
-    // Check location permissions.
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         return null;
       }
     }
 
-    // If all permissions are granted, get the location.
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     return {
       'latitude': position.latitude,
@@ -106,6 +97,8 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _sendMessage() async {
     final userMessage = messageController.text;
     if (userMessage.isEmpty) return;
+
+    HapticFeedback.lightImpact();
 
     setState(() {
       messages.add("User: $userMessage");
@@ -130,6 +123,7 @@ class _ChatPageState extends State<ChatPage> {
         );
 
         if (response.statusCode == 200) {
+          await Future.delayed(Duration(seconds: 1));
           final responseData = json.decode(response.body);
           final botMessage = responseData['response'];
 
@@ -148,6 +142,7 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     messageController.clear();
+    _scrollToBottom();
   }
 
   void _handleError(String errorMessage) {
@@ -171,33 +166,37 @@ class _ChatPageState extends State<ChatPage> {
     return null;
   }
 
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Gideon')),
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/back.png'),
-              fit: BoxFit.cover,
-          ),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ Colors.orange[100]!, Colors.orange[50]!],
+            colors: [Colors.orange[100]!, Colors.orange[50]!],
           ),
+          image: DecorationImage(image: AssetImage('assets/back.png'), fit: BoxFit.cover),
         ),
         child: Column(
           children: [
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 itemCount: isBotTyping ? messages.length + 1 : messages.length,
                 itemBuilder: (context, index) {
-                  // Check if we should show typing animation
-                  if (isBotTyping && index == messages.length) {
+                  if (index == messages.length) {
                     return buildTypingAnimation();
                   }
-
                   bool isUserMessage = messages[index].startsWith('User:');
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -213,16 +212,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (!isUserMessage) CircleAvatar(backgroundImage: AssetImage('assets/bot.png')),
-                                if (!isUserMessage) SizedBox(width: 10),
-                                Expanded(child: Text(messages[index].replaceFirst('User: ', '').replaceFirst('Bot: ', ''), style: TextStyle(fontSize: 16, color: Colors.black87))),
-                                if (isUserMessage) SizedBox(width: 10),
-                                if (isUserMessage) CircleAvatar(backgroundImage: AssetImage('assets/user.png')),
-                              ],
-                            ),
+                            child: Text(messages[index].replaceFirst('User: ', '').replaceFirst('Bot: ', ''), style: TextStyle(fontSize: 16, color: Colors.black87)),
                           ),
                         ),
                       ),
@@ -231,32 +221,27 @@ class _ChatPageState extends State<ChatPage> {
                 },
               ),
             ),
-
-            
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       controller: messageController,
                       decoration: InputDecoration(
                         hintText: "Type a message...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide.none,
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
                         filled: true,
                         fillColor: Colors.grey[200],
                       ),
+                      onChanged: (text) {
+                        setState(() {});  // Trigger a rebuild to refresh the IconButton's onPressed state
+                      },
                     ),
-
-                    
                   ),
                   IconButton(
                     icon: Icon(Icons.send, color: Colors.blue),
-                    onPressed: _sendMessage,
+                    onPressed: messageController.text.trim().isEmpty ? null : _sendMessage,
                   ),
                 ],
               ),
