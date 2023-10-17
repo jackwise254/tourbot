@@ -123,6 +123,7 @@ class _ChatPageState extends State<ChatPage> {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken,
           },
+
           body: json.encode({
             'message': userMessage,
             'location': userLocation,
@@ -141,7 +142,7 @@ class _ChatPageState extends State<ChatPage> {
           _handleError("Sorry, I couldn't process your request.");
         }
       } else {
-        _handleError("Location or CSRF token missing.");
+        _handleError("Sorry, I couldn't process your request, servers down!.");
       }
     } catch (error) {
       _handleError("An error occurred: $error");
