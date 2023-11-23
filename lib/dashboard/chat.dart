@@ -4,10 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
-const BASE_URL = 'http://10.0.2.2:8000/';
+const BASE_URL = 'http://192.168.100.31:8000/';
 const CHATBOT_ENDPOINT = '${BASE_URL}api/chatbot/';
 const CSRF_ENDPOINT = '${BASE_URL}get-csrf/';
-
+// /home/jack/Android/Sdk/flutter
 void main() => runApp(ChatApp());
 
 class ChatApp extends StatelessWidget {

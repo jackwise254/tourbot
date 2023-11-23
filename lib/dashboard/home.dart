@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'chat.dart';
 
-
 void main() => runApp(MainDashboardPage());
 
 class MainDashboardPage extends StatefulWidget {
@@ -27,15 +26,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
 
   void _onAndroidIconPressed() {
     Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ChatPage()),
+      context,
+      MaterialPageRoute(builder: (context) => ChatPage()),
     );
-}
-
+  }
 
   Future<void> _determinePosition() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+      desiredAccuracy: LocationAccuracy.high,
+    );
     userLocation = LatLng(position.latitude, position.longitude);
     pois = await fetchPOIs(userLocation!);
     setState(() {});
@@ -51,7 +50,8 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
       out body;
     ''';
 
-    final response = await http.get(Uri.parse('https://overpass-api.de/api/interpreter?data=$query'));
+    final response = await http.get(
+        Uri.parse('https://overpass-api.de/api/interpreter?data=$query'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -80,15 +80,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
       ),
       home: DefaultTabController(
         length: 2,
-      child: Scaffold(
-        appBar: AppBar(
+        child: Scaffold(
+          appBar: AppBar(
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(2.0),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   TabBar(
-                    indicatorColor: Colors.white,
+                    indicatorColor: Colors.grey,
                     labelPadding: EdgeInsets.only(top: 2.0),
                     tabs: [
                       Tab(
@@ -97,7 +97,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                           children: [
                             Icon(Icons.home, color: Colors.white),
                             SizedBox(width: 8),
-                            // Text("Home"),
                           ],
                         ),
                       ),
@@ -107,7 +106,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                           children: [
                             Icon(Icons.access_time, color: Colors.white),
                             SizedBox(width: 8),
-                            // Text("Recent"),
                           ],
                         ),
                       ),
@@ -124,126 +122,174 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
               ),
             ),
           ),
-        body: TabBarView(
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search for places...',
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        prefixIcon: Icon(Icons.search, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.mic),
-                          color: Colors.grey,
-                          onPressed: () {
-                            // Logic to trigger voice search
-                          },
+          body: TabBarView(
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Search for places...',
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 20.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: Icon(Icons.search, color: Colors.grey),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.mic),
+                            color: Colors.grey,
+                            onPressed: () {
+                              // Logic to trigger voice search
+                            },
+                          ),
                         ),
                       ),
                     ),
                   ),
+                 
+                Container(
+                  height: 200.0,
+                  child: PageView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5, // Number of rectangles
+                    itemBuilder: (context, index) {
+                      final int pageIndex = index % 5; // Calculate the actual index in a loop
+                      return Container(
+                        width: 150.0,
+                        margin: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                            image: AssetImage('assets/bot.png'), // Change to your image
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10.0),
+                                  bottomRight: Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Text(
+                                'Tourist Site $pageIndex',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
+
+
                 Expanded(
-                  child: userLocation == null
-                      ? Center(child: CircularProgressIndicator())
-                      : FlutterMap(
-                          options: MapOptions(
+                    child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                          color: Colors.orange, // You can change the color as needed
+                          width: 2.0,
+                        ),
+                      ),
+
+
+                      child: FlutterMap(
+                        options: MapOptions(
                             center: userLocation,
                             zoom: 13.0,
                           ),
-                          layers: [
-                            TileLayerOptions(
-                              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        children: [
+                          TileLayer(
+                             urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                               subdomains: ['a', 'b', 'c'],
-                            ),
-                            MarkerLayerOptions(
-                            markers: [
-                              Marker(
-                                width: 80.0,
-                                height: 80.0,
-                                point: userLocation!,
-                                builder: (ctx) => Container(
-                                  child: Icon(
-                                    Icons.location_on,
-                                    color: Colors.red,
-                                    size: 40.0,
-                                  ),
-                                ),
-                              ),
-                              ...pois.map((poi) {
-                                return Marker(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  point: poi,
-                                  builder: (ctx) => Container(
-                                    child: Icon(
-                                      Icons.place,
-                                      color: Colors.orange,
-                                      size: 40.0,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ],
                           ),
-                          ],
-                        ),
-                ),
-              ],
-            ),
-            Center(child: Text("Recent Tab")), // Placeholder for the Recent Tab
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            if (index == 1) { // The Android icon is at index 1
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChatPage()),
-              );
-            }
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home, size:25.0), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.android, size:25.0), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.settings_input_antenna, size:25.0), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications, size:25.0), label: ""),
-          ],
-          backgroundColor: Colors.orange,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-        ),
+                          // Add other layers as needed
+                        ],
+                      ),
 
+
+
+                      
+                    ),
+                  ),
+                ],
+              ),
+              Center(child: Text("Recent Tab")),
+            ],
+          ),
+
+
+
+
+
+
+
+
+          
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              if (index == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatPage()),
+                );
+              }
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home, size: 25.0), label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.android, size: 25.0), label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings_input_antenna, size: 25.0),
+                  label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.notifications, size: 25.0), label: ""),
+            ],
+            backgroundColor: Colors.orange,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+          ),
+        ),
       ),
-    ),
     );
   }
 }
