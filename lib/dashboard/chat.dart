@@ -14,6 +14,8 @@ class ChatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+    debugShowCheckedModeBanner: false,
+
       title: 'Gideon',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: ChatPage(),
@@ -176,6 +178,8 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Gideon')),
+      backgroundColor: Colors.orange,
+
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

@@ -9,14 +9,18 @@ import 'chat.dart';
 void main() => runApp(MainDashboardPage());
 
 class MainDashboardPage extends StatefulWidget {
+  
   @override
   _MainDashboardPageState createState() => _MainDashboardPageState();
+  
 }
 
 class _MainDashboardPageState extends State<MainDashboardPage> {
+  
   LatLng? userLocation;
   List<LatLng> pois = [];
   int _currentIndex = 0;
+  bool showLocationLayer = true; 
 
   @override
   void initState() {
@@ -67,7 +71,9 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
+    debugShowCheckedModeBanner: false,
       title: 'Home',
       theme: ThemeData(
         primarySwatch: Colors.orange,
@@ -82,6 +88,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.orange,
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(2.0),
               child: Stack(
@@ -142,25 +149,29 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                           ),
                         ],
                       ),
+
+
                       child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search for places...',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          prefixIcon: Icon(Icons.search, color: Colors.grey),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.mic),
-                            color: Colors.grey,
-                            onPressed: () {
-                              // Logic to trigger voice search
-                            },
+                          decoration: InputDecoration(
+                            hintText: 'Search for places...',
+                            contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.grey[200], // Add a subtle background color
+                            filled: true,
+                            prefixIcon: Icon(Icons.search, color: Colors.grey),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.mic),
+                              color: Colors.grey,
+                              onPressed: () {
+                                // Logic to trigger voice search
+                              },
+                            ),
                           ),
                         ),
-                      ),
+
                     ),
                   ),
                  
@@ -217,12 +228,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                       margin: EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          color: Colors.orange, // You can change the color as needed
-                          width: 2.0,
-                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
-
 
                       child: FlutterMap(
                         options: MapOptions(
@@ -234,6 +248,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                               subdomains: ['a', 'b', 'c'],
                           ),
+                          
                           // Add other layers as needed
                         ],
                       ),
@@ -243,20 +258,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                       
                     ),
                   ),
+
+
+                  
                 ],
               ),
+              
               Center(child: Text("Recent Tab")),
             ],
           ),
-
-
-
-
-
-
-
-
-          
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) {
@@ -272,22 +282,30 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             },
             items: [
               BottomNavigationBarItem(
-                  icon: Icon(Icons.home, size: 25.0), label: ""),
+                icon: Icon(Icons.home, size: 25.0),
+                label: "",
+              ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.android, size: 25.0), label: ""),
+                icon: Icon(Icons.android, size: 25.0),
+                label: "",
+              ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.settings_input_antenna, size: 25.0),
-                  label: ""),
+                icon: Icon(Icons.settings_input_antenna, size: 25.0),
+                label: "",
+              ),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications, size: 25.0), label: ""),
+                icon: Icon(Icons.notifications, size: 25.0),
+                label: "",
+              ),
             ],
             backgroundColor: Colors.orange,
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white,
             type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
           ),
+          
         ),
       ),
     );
